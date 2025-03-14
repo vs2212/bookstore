@@ -1,0 +1,6 @@
+<h1>{{ book.title }}</h1>
+<p>Автор: {{ book.author }}</p>
+<p>Цена: {{ book.price }} руб.</p>
+<p>Описание: {{ book.description }}</p>
+<p>Дата публикации: {{ book.published_date }}</p>
+<a href="{% url 'book_list' %}">Назад к списку</a>
