@@ -1,6 +1,18 @@
-<h1>{{ book.title }}</h1>
-<p>Автор: {{ book.author }}</p>
-<p>Цена: {{ book.price }} руб.</p>
-<p>Описание: {{ book.description }}</p>
-<p>Дата публикации: {{ book.published_date }}</p>
-<a href="{% url 'book_list' %}">Назад к списку</a>
+{% extends 'books/base.html' %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block content %}
+    <h1>{{ book.title }}</h1>
+    <p><strong>Автор:</strong> {{ book.author }}</p>
+    <p><strong>Цена:</strong> {{ book.price }} руб.</p>
+    <p><strong>Описание:</strong> {{ book.description }}</p>
+    <p><strong>Дата публикации:</strong> {{ book.published_date }}</p>
+
+    {% if user.is_authenticated and user.role == 'admin' %}
+        <a class="button" href="{% url 'book_edit' book.pk %}">Изменить</a>
+        <a class="button" href="{% url 'book_delete' book.pk %}" style="background-color: #d9534f;">Удалить</a>
+    {% endif %}
+
+    <a class="button" href="{% url 'book_list' %}">Назад к списку</a>
+{% endblock %}

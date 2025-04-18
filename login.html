@@ -1,0 +1,15 @@
+{% extends 'books/base.html' %}
+
+{% block title %}Вход{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <h2>Вход в Bookshop</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Войти</button>
+    </form>
+    <p>Еще нет аккаунта? <a href="{% url 'signup' %}">Зарегистрироваться</a></p>
+</div>
+{% endblock %}

@@ -1,19 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if form.instance.pk %}Редактировать книгу{% else %}Добавить новую книгу{% endif %}</title>
-</head>
-<body>
-    <h1>{% if form.instance.pk %}Редактировать книгу{% else %}Добавить новую книгу{% endif %}</h1>
+{% extends 'books/base.html' %}
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Сохранить</button>
-    </form>
+{% block title %}{% if form.instance.pk %}Изменить книгу{% else %}Добавить новую книгу{% endif %}{% endblock %}
 
-    <a href="{% url 'book_list' %}">Назад к списку</a>
-</body>
-</html>
+{% block content %}
+<h1>{% if form.instance.pk %}Изменить книгу{% else %}Добавить новую книгу{% endif %}</h1>
+
+{% if user.is_authenticated and user.role == 'admin' or not form.instance.pk %}
+    <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Сохранить</button>
+        </form>
+    </div>
+{% else %}
+    <p>У вас нет прав для редактирования этой книги.</p>
+{% endif %}
+
+<a class="button" href="{% url 'book_list' %}">Назад к списку</a>
+{% endblock %}

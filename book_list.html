@@ -1,37 +1,58 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Список книг</title>
-</head>
-<body>
-    <h1>Список книг</h1>
-    <a href="{% url 'book_new' %}">Добавить новую книгу</a>
-    <ul>
-        {% for book in books %}
-            <li>
-                {{ book.title }} - {{ book.author }} - {{ book.price }} руб.
-                <a href="{% url 'book_detail' book.pk %}">Подробнее</a>
-                <a href="{% url 'book_edit' book.pk %}">Изменить</a>
-                <a href="{% url 'book_delete' book.pk %}">Удалить</a>
-            </li>
-        {% endfor %}
-    </ul>
-    <div class="pagination">
-        <span class="step-links">
-            {% if books.has_previous %}
-                <a href="?page=1">&laquo; первая</a>
-                <a href="?page={{ books.previous_page_number }}">предыдущая</a>
+{% extends 'books/base.html' %}
+
+{% block title %}Список книг{% endblock %}
+
+{% block content %}
+<h1>Список книг</h1>
+
+<!-- Форма для фильтрации -->
+<form method="get" action="{% url 'book_list' %}" style="margin-bottom: 20px;">
+    <label for="author">Автор:</label>
+    <input type="text" id="author" name="author" value="{{ request.GET.author }}">
+
+    <label for="title">Название:</label>
+    <input type="text" id="title" name="title" value="{{ request.GET.title }}">
+
+    <button type="submit">Фильтровать</button>
+</form>
+
+<!-- Кнопки для сортировки -->
+<div style="margin-bottom: 20px;">
+    <a class="button" href="?sort=price_asc">Сортировать по цене (от меньшей к большей)</a>
+    <a class="button" href="?sort=price_desc">Сортировать по цене (от большей к меньшей)</a>
+</div>
+
+{% if user.is_authenticated %}
+    <a class="button" href="{% url 'book_new' %}">Добавить новую книгу</a>
+{% endif %}
+
+<ul style="list-style: none; padding: 0;">
+    {% for book in books %}
+        <li style="background: white; padding: 10px; margin: 10px 0; border-radius: 8px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);">
+            <strong>{{ book.title }}</strong> - {{ book.author }} - {{ book.price }} руб.
+
+            {% if user.is_authenticated and user.role == 'admin' %}
+                <a class="button" href="{% url 'book_edit' book.pk %}">Изменить</a>
+                <a class="button" href="{% url 'book_delete' book.pk %}" style="background-color: #d9534f;">Удалить</a>
             {% endif %}
-            <span class="current">
-                Страница {{ books.number }} из {{ books.paginator.num_pages }}.
-            </span>
-            {% if books.has_next %}
-                <a href="?page={{ books.next_page_number }}">следующая</a>
-                <a href="?page={{ books.paginator.num_pages }}">последняя &raquo;</a>
-            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+
+<!-- Пагинация -->
+<div class="pagination" style="text-align: center; margin-top: 20px;">
+    <span class="step-links">
+        {% if books.has_previous %}
+            <a class="button" href="?page=1">&laquo; первая</a>
+            <a class="button" href="?page={{ books.previous_page_number }}">предыдущая</a>
+        {% endif %}
+        <span class="current">
+            Страница {{ books.number }} из {{ books.paginator.num_pages }}.
         </span>
-    </div>
-</body>
-</html>
+        {% if books.has_next %}
+            <a class="button" href="?page={{ books.next_page_number }}">следующая</a>
+            <a class="button" href="?page={{ books.paginator.num_pages }}">последняя &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}
